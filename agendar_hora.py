@@ -1,153 +1,59 @@
 from conexion import conectar
 
-def listar_pacientes():
+def agendar_hora():
+    print("\n--- AGENDAR HORA ---")
+    
     conexion = conectar()
     if conexion is None:
-        print("No se pudo conectar a la base de datos.")
         return
     
     try:
         cursor = conexion.cursor()
-        cursor.execute("SELECT id_paciente, rut, nombres, apellidos FROM tbl_paciente ORDER BY nombres")
+        
+        # Aquí muestra a los pacientes
+        cursor.execute("SELECT id_paciente, nombres, apellidos FROM tbl_paciente")
         pacientes = cursor.fetchall()
         
-        if pacientes:
-            print("\n=== PACIENTES REGISTRADOS ===")
-            for paciente in pacientes:
-                print(f"ID: {paciente[0]} | RUT: {paciente[1]} | Nombre: {paciente[2]} {paciente[3]}")
-            print("==============================\n")
-        else:
-            print("No hay pacientes registrados. Registre un paciente primero.")
-        
-    except Exception as e:
-        print("Error al listar pacientes:", e)
-    finally:
-        cursor.close()
-        conexion.close()
-
-def obtener_id_paciente(nombre_paciente):
-    conexion = conectar()
-    if conexion is None:
-        print("No se pudo conectar a la base de datos.")
-        return None
-    try:
-        cursor = conexion.cursor()
-
-        cursor.execute("""
-            SELECT id_paciente, nombres, apellidos 
-            FROM tbl_paciente 
-            WHERE nombres LIKE %s OR apellidos LIKE %s
-        """, (f'%{nombre_paciente}%', f'%{nombre_paciente}%'))
-        
-        resultados = cursor.fetchall()
-        
-        if len(resultados) == 0:
-            print("No existe un paciente con ese nombre.")
-            return None
-        elif len(resultados) == 1:
-            return resultados[0][0]  
-        else:
-        
-            print("\nSe encontraron varios pacientes:")
-            for i, paciente in enumerate(resultados, 1):
-                print(f"{i}. {paciente[1]} {paciente[2]} (ID: {paciente[0]})")
-            
-            try:
-                opcion = int(input("\nSeleccione el número del paciente: ")) - 1
-                if 0 <= opcion < len(resultados):
-                    return resultados[opcion][0]
-                else:
-                    print("Opción inválida.")
-                    return None
-            except ValueError:
-                print("Por favor ingrese un número válido.")
-                return None
-                
-    except Exception as e:
-        print("Error al buscar paciente:", e)
-        return None
-    finally:
-        cursor.close()
-        conexion.close()
-
-def verificar_hora_existente(fecha_hora, medico):
-    conexion = conectar()
-    if conexion is None:
-        return False
-    
-    try:
-        cursor = conexion.cursor()
-        cursor.execute("""
-            SELECT id_hora FROM tbl_hora_medica 
-            WHERE fecha_hora = %s AND medico = %s AND estado != 'Cancelada'
-        """, (fecha_hora, medico))
-        
-        return cursor.fetchone() is not None
-    except Exception as e:
-        print("Error al verificar hora:", e)
-        return False
-    finally:
-        cursor.close()
-        conexion.close()
-
-def agendar_hora():
-    print("\n=== AGENDAR HORA MÉDICA ===")
-    
-    listar_pacientes()
-    
-    nombre_paciente = input("Ingrese nombre o apellido del paciente: ").strip()
-    
-    if not nombre_paciente:
-        print("Debe ingresar un nombre.")
-        return
-
-    # Buscar el ID automáticamente
-    id_paciente = obtener_id_paciente(nombre_paciente)
-    if not id_paciente:
-        return
-
-    print("\n--- Datos de la cita ---")
-    fecha = input("Fecha (YYYY-MM-DD): ").strip()
-    hora = input("Hora (HH:MM:SS): ").strip()
-    fecha_hora = f"{fecha} {hora}"
-    
-    especialidad = input("Especialidad: ").strip()
-    medico = input("Nombre del médico: ").strip()
-
-    if not all([fecha, hora, especialidad, medico]):
-        print("Todos los campos son obligatorios.")
-        return
-
-    if verificar_hora_existente(fecha_hora, medico):
-        print(f"El médico {medico} ya tiene una hora agendada para {fecha_hora}")
-        confirmar = input("¿Desea agendar de todas formas? (s/n): ").lower()
-        if confirmar != 's':
+        if not pacientes:
+            print("No hay pacientes registrados")
             return
-
-    conexion = conectar()
-    if conexion is None:
-        print("No se pudo conectar a la base de datos.")
-        return
-
-    try:
-        cursor = conexion.cursor()
-        query = """
-            INSERT INTO tbl_hora_medica (id_paciente, fecha_hora, especialidad, medico, estado)
-            VALUES (%s, %s, %s, %s, 'Agendada')
-        """
-        valores = (id_paciente, fecha_hora, especialidad, medico)
-        cursor.execute(query, valores)
-        conexion.commit()
-        print(f"\n✓ Hora médica agendada correctamente para el paciente (ID: {id_paciente})")
-        print(f"  Fecha: {fecha_hora}")
-        print(f"  Especialidad: {especialidad}")
-        print(f"  Médico: {medico}")
         
+        print("\nPacientes disponibles:")
+        for i, paciente in enumerate(pacientes, 1):
+            print(f"{i}. {paciente[1]} {paciente[2]}")
+        
+        
+        opcion = int(input("\nSeleccione un paciente: "))
+        
+        if 1 <= opcion <= len(pacientes):
+            id_paciente = pacientes[opcion-1][0]
+            
+            
+            fecha = input("Fecha (YYYY-MM-DD): ")
+            hora = input("Hora (HH:MM:SS): ")
+            especialidad = input("Especialidad: ")
+            medico = input("Médico: ")
+            
+            fecha_hora = f"{fecha} {hora}"
+            
+            
+            cursor.execute("""
+                INSERT INTO tbl_hora_medica (id_paciente, fecha_hora, especialidad, medico, estado)
+                VALUES (%s, %s, %s, %s, 'Agendada')
+            """, (id_paciente, fecha_hora, especialidad, medico))
+            
+            conexion.commit()
+            print("Hora agendada correctamente")
+            
+        else:
+            print("Opción inválida")
+            
     except Exception as e:
-        print("Error al agendar hora médica:", e)
+        print("Error:", e)
     finally:
         cursor.close()
         conexion.close()
+
 
 if __name__ == "__main__":
     agendar_hora()

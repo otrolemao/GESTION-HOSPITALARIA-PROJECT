@@ -53,7 +53,7 @@ class FormularioPaciente:
                 )
                 cursor.execute(sql, datos)
                 conexion.commit()
-                print("\n Paciente registrado correctamente en la base de datos.")
+                print("\n Paciente registrado correctamente.")
 
         except Error as e:
             print("Error al conectar o guardar en MySQL:", e)
