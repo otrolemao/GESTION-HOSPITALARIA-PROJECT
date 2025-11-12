@@ -1,4 +1,4 @@
-from conexion import conectar
+from src.database.conexion import conectar
 
 def agendar_hora():
     print("\n--- AGENDAR HORA ---")

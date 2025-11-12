@@ -1,4 +1,4 @@
-from conexion import conectar
+from src.database.conexion import conectar
 
 def buscar_editar_paciente():
     print("\n--- BUSCAR Y EDITAR PACIENTE ---")

@@ -1,4 +1,4 @@
-from conexion import conectar
+from src.database.conexion import conectar
 
 def cancelar_hora():
     print("\n--- CANCELAR HORA ---")

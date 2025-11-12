@@ -1,9 +1,9 @@
 # AQUI ESTA EL menu_principal.py, que es como la interface en si xd, con todas las opciones y su respectiva tarea
-from registrar_paciente import FormularioPaciente
-from buscar_editar_paciente import buscar_editar_paciente
-from agendar_hora import agendar_hora
-from vista_reagendamiento import VistaReagendamiento
-from gestion_hora import cancelar_hora
+from src.consola.registrar_paciente import FormularioPaciente
+from src.consola.buscar_editar_paciente import buscar_editar_paciente
+from src.consola.agendar_hora import agendar_hora
+from src.consola.vista_reagendamiento import VistaReagendamiento
+from src.consola.gestion_hora import cancelar_hora
 
 def menu_principal():
     while True:

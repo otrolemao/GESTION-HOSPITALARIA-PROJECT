@@ -1,4 +1,4 @@
-from conexion import conectar
+from src.database.conexion import conectar
 
 class VistaReagendamiento:
     def __init__(self):
