@@ -4,9 +4,9 @@ def conectar():
     try:
         conexion = mysql.connector.connect(
             host="localhost",
-            user="root",             # tu usuario de MySQL
-            password="", # cambia esto por tu contraseña real
-            database="db_hospital"    # nombre exacto de tu base de datos
+            user="root",         
+            password="",
+            database="db_hospital"    
         )
 
         if conexion.is_connected():

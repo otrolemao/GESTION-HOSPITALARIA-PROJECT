@@ -1,6 +1,5 @@
 from conexion import conectar
 
-# Función para mostrar pacientes existentes
 def listar_pacientes():
     conexion = conectar()
     if conexion is None:
@@ -26,7 +25,6 @@ def listar_pacientes():
         cursor.close()
         conexion.close()
 
-# Buscar el id del paciente por su nombre
 def obtener_id_paciente(nombre_paciente):
     conexion = conectar()
     if conexion is None:
@@ -34,7 +32,7 @@ def obtener_id_paciente(nombre_paciente):
         return None
     try:
         cursor = conexion.cursor()
-        # Buscar por nombre o apellido
+
         cursor.execute("""
             SELECT id_paciente, nombres, apellidos 
             FROM tbl_paciente 
@@ -47,9 +45,9 @@ def obtener_id_paciente(nombre_paciente):
             print("No existe un paciente con ese nombre.")
             return None
         elif len(resultados) == 1:
-            return resultados[0][0]  # Retorna el ID del paciente
+            return resultados[0][0]  
         else:
-            # Múltiples resultados
+        
             print("\nSe encontraron varios pacientes:")
             for i, paciente in enumerate(resultados, 1):
                 print(f"{i}. {paciente[1]} {paciente[2]} (ID: {paciente[0]})")
@@ -72,7 +70,6 @@ def obtener_id_paciente(nombre_paciente):
         cursor.close()
         conexion.close()
 
-# Función para verificar si ya existe una hora en la misma fecha/hora
 def verificar_hora_existente(fecha_hora, medico):
     conexion = conectar()
     if conexion is None:
@@ -93,11 +90,9 @@ def verificar_hora_existente(fecha_hora, medico):
         cursor.close()
         conexion.close()
 
-# Función principal para agendar hora médica
 def agendar_hora():
     print("\n=== AGENDAR HORA MÉDICA ===")
     
-    # Mostrar pacientes disponibles
     listar_pacientes()
     
     nombre_paciente = input("Ingrese nombre o apellido del paciente: ").strip()
@@ -111,7 +106,6 @@ def agendar_hora():
     if not id_paciente:
         return
 
-    # Pedir datos de la cita
     print("\n--- Datos de la cita ---")
     fecha = input("Fecha (YYYY-MM-DD): ").strip()
     hora = input("Hora (HH:MM:SS): ").strip()
@@ -120,19 +114,16 @@ def agendar_hora():
     especialidad = input("Especialidad: ").strip()
     medico = input("Nombre del médico: ").strip()
 
-    # Validaciones básicas
     if not all([fecha, hora, especialidad, medico]):
         print("Todos los campos son obligatorios.")
         return
 
-    # Verificar si la hora ya está ocupada
     if verificar_hora_existente(fecha_hora, medico):
         print(f"El médico {medico} ya tiene una hora agendada para {fecha_hora}")
         confirmar = input("¿Desea agendar de todas formas? (s/n): ").lower()
         if confirmar != 's':
             return
 
-    # Conectar y guardar
     conexion = conectar()
     if conexion is None:
         print("No se pudo conectar a la base de datos.")
@@ -158,6 +149,5 @@ def agendar_hora():
         cursor.close()
         conexion.close()
 
-# Función para probar el módulo
 if __name__ == "__main__":
     agendar_hora()

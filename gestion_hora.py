@@ -1,7 +1,6 @@
 from conexion import conectar
 from datetime import datetime
 
-# Función para listar horas médicas de un paciente
 def listar_horas_paciente(id_paciente=None, mostrar_todas=False, solo_activas=True):
     conexion = conectar()
     if conexion is None:
@@ -12,7 +11,7 @@ def listar_horas_paciente(id_paciente=None, mostrar_todas=False, solo_activas=Tr
         cursor = conexion.cursor(dictionary=True)
         
         if mostrar_todas:
-            # Mostrar todas las horas médicas
+
             query = """
                 SELECT h.id_hora, p.nombres, p.apellidos, h.fecha_hora, 
                        h.especialidad, h.medico, h.estado
@@ -24,7 +23,7 @@ def listar_horas_paciente(id_paciente=None, mostrar_todas=False, solo_activas=Tr
             query += " ORDER BY h.fecha_hora DESC"
             cursor.execute(query)
         elif id_paciente:
-            # Mostrar horas de un paciente específico
+           
             query = """
                 SELECT id_hora, fecha_hora, especialidad, medico, estado
                 FROM tbl_hora_medica 
@@ -47,7 +46,6 @@ def listar_horas_paciente(id_paciente=None, mostrar_todas=False, solo_activas=Tr
         cursor.close()
         conexion.close()
 
-# Función para buscar paciente por nombre (similar a la de agendar_hora pero devuelve más datos)
 def buscar_paciente_por_nombre(nombre_paciente):
     conexion = conectar()
     if conexion is None:
@@ -72,11 +70,11 @@ def buscar_paciente_por_nombre(nombre_paciente):
         cursor.close()
         conexion.close()
 
-# Función para cancelar una hora médica
+
 def cancelar_hora():
     print("\n=== CANCELAR HORA MÉDICA ===")
     
-    # Mostrar todas las horas activas
+
     horas = listar_horas_paciente(mostrar_todas=True, solo_activas=True)
     
     if not horas:
@@ -124,11 +122,11 @@ def cancelar_hora():
     except ValueError:
         print("Por favor ingrese un número válido.")
 
-# Función para reagendar una hora médica
+
 def reagendar_hora():
     print("\n=== REAGENDAR HORA MÉDICA ===")
     
-    # Mostrar todas las horas activas
+
     horas = listar_horas_paciente(mostrar_todas=True, solo_activas=True)
     
     if not horas:
@@ -167,7 +165,7 @@ def reagendar_hora():
                 
                 try:
                     cursor = conexion.cursor()
-                    # Actualizar la fecha/hora y cambiar estado a Reagendada
+                    
                     cursor.execute("""
                         UPDATE tbl_hora_medica 
                         SET fecha_hora = %s, estado = 'Reagendada' 
@@ -189,7 +187,7 @@ def reagendar_hora():
     except ValueError:
         print("Por favor ingrese un número válido.")
 
-# Función para buscar horas por paciente
+
 def buscar_horas_por_paciente():
     print("\n=== BUSCAR HORAS POR PACIENTE ===")
     
@@ -225,7 +223,7 @@ def buscar_horas_por_paciente():
             print("Por favor ingrese un número válido.")
             return
     
-    # Listar horas del paciente seleccionado
+
     horas = listar_horas_paciente(id_paciente=id_paciente, solo_activas=False)
     
     if not horas:
@@ -238,7 +236,7 @@ def buscar_horas_por_paciente():
         estado_icon = "✓" if estado == 'Agendada' else "✗" if estado == 'Cancelada' else "↻"
         print(f"{estado_icon} Fecha: {hora['fecha_hora']} | Médico: {hora['medico']} | Especialidad: {hora['especialidad']} | Estado: {estado}")
 
-# Función para mostrar menú de gestión de horas
+
 def menu_gestion_horas():
     while True:
         print("\n=== GESTIÓN DE HORAS MÉDICAS ===")
@@ -271,6 +269,5 @@ def menu_gestion_horas():
         else:
             print("Opción inválida. Por favor seleccione 1-5.")
 
-# Ejecutar si se llama directamente
 if __name__ == "__main__":
     menu_gestion_horas()
