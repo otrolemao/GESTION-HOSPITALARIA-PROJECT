@@ -1,4 +1,5 @@
 from tkinter import *
+#EXPERIMENTANDO CON TKINTER (CODIGO DE VENTANA GRAFICA)
 import sys
 import os
 
